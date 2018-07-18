@@ -1,0 +1,22 @@
+{% extends parent_template|default:'accounts/base_accounts.html' %}
+
+{% block title %}
+{{ block.super }} - Login
+{% endblock title %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4"></div>
+    <div class="col-md-4">
+        <form action="{% url 'student:login' %}" method="post">
+            {% csrf_token %}
+            {{form.as_p}}
+            {% if next %}
+                <input type="hidden" name="next" value="{{next}}"> 
+            {% endif %}
+            <button type="submit" class="btn btn-outline-primary">Login</button>
+        </form>
+    </div> 
+    <div class="col-md-4"></div>
+</div>
+{% endblock content %}
