@@ -1,6 +1,6 @@
 from django.urls import path, include, reverse_lazy
 from django.contrib.auth.views import (
-    password_change, password_change_done
+    password_change, password_change_done, PasswordChangeView, PasswordChangeDoneView
 ) 
 
 
@@ -10,21 +10,13 @@ app_name = 'student'
 
 
 password_urls = [
-    path(
-        'change/', password_change,
-        {
-            'template_name': 'accounts/password_change_form.html',
-            'post_change_redirect': reverse_lazy('student:pw_change_done')
-        },
-        name='pw_change'
-    ),
-    path(
-        'change/done/', password_change_done, 
-        {
-            'template_name': 'accounts/password_change_done.html'
-        },
-        name='pw_change_done'
-    ),
+    path('change/', PasswordChangeView.as_view(
+            template_name='accounts/password_change_form.html',
+            success_url=reverse_lazy('student:pw_change_done')
+    ), name='pw_change'),
+    path('done/', PasswordChangeDoneView.as_view(
+        template_name='accounts/password_change_done.html'
+    ), name='pw_change_done')
 ]
 
 
