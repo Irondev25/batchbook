@@ -1,11 +1,17 @@
 {% extends parent_template|default:'accounts/base_accounts.html' %}
 
+{% load staticfiles %}
+
 {% block title %}
 {{ block.super }} - Login
 {% endblock title %}
 
+{% block css_block %}
+<link rel="stylesheet" href="{% static 'accounts/style.css' %}">
+{% endblock css_block %}
+
 {% block content %}
-<div class="row">
+<div class="row auth-form">
     <div class="col-md-4"></div>
     <div class="col-md-4">
         <form action="{% url 'student:login' %}" method="post">
