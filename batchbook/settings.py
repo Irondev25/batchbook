@@ -30,6 +30,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+SITE_ID = 1
+
 
 #SWAPPABLE USER-MODEL
 AUTH_USER_MODEL = 'accounts.student'
@@ -44,6 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
     'django_extensions',
     'accounts',
 ]
@@ -155,3 +158,12 @@ from django.urls import reverse_lazy
 LOGIN_REDIRECT_URL = reverse_lazy('index')
 LOGIN_URL = reverse_lazy('student:login')
 LOGOUT_URL = reverse_lazy('student:logout')
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+SERVER_EMAIL = 'contact@batchbook.com'
+DEFAULT_FROM_EMAIL = 'no-reply@django-unleashed.com'
+EMAIL_SUBJECT_PREFIX = '[BatchBook]'
+#it logs errrs and sent it to below
+MANAGERS = (
+    ('Us', 'ourselves@batchbook.com')
+)
