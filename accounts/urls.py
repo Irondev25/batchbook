@@ -5,7 +5,7 @@ from django.views.generic import RedirectView
 
 
 from .views import Login, logout_view
-from .forms import AuthenticationForm
+from .forms import LoginForm, PasswordResetForm, SetPasswordForm, PasswordChangeForm
 
 app_name = 'student'
 
@@ -13,7 +13,8 @@ app_name = 'student'
 password_urls = [
     path('change/', auth_views.PasswordChangeView.as_view(
             template_name='accounts/password_change_form.html',
-            success_url=reverse_lazy('student:pw_change_done')
+            success_url=reverse_lazy('student:pw_change_done'),
+            form_class = PasswordChangeForm
     ), name='pw_change'),
     path('done/', auth_views.PasswordChangeDoneView.as_view(
         template_name='accounts/password_change_done.html'
@@ -24,7 +25,8 @@ password_urls = [
             template_name='accounts/password_reset_form.html',
             email_template_name='accounts/password_reset_email.txt',
             subject_template_name='accounts/password_reset_subject.txt',
-            success_url=reverse_lazy('student:pw_reset_sent')
+            success_url=reverse_lazy('student:pw_reset_sent'),
+            form_class=PasswordResetForm
         ),
         name='pw_reset_start'
     ),
@@ -42,7 +44,8 @@ password_urls = [
         r'-[0-9A-Za-z]{1,20})/$',
         auth_views.PasswordResetConfirmView.as_view(
             template_name='accounts/password_reset_confirm.html',
-            success_url=reverse_lazy('student:pw_reset_complete')
+            success_url=reverse_lazy('student:pw_reset_complete'),
+            form_class=SetPasswordForm
         ),
         name='pw_reset_confirm'
     ),
@@ -50,7 +53,7 @@ password_urls = [
         r'^reset/done/$',
         auth_views.PasswordResetCompleteView.as_view(
             template_name='accounts/password_reset_complete.html',
-            extra_context={'form': AuthenticationForm}
+            extra_context={'form': LoginForm}
         ),
         name='pw_reset_complete'
     ),
