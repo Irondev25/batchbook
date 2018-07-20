@@ -20,11 +20,11 @@ class StudentAdmin(BaseUserAdmin):
     actions = ['make_staff']
     list_display = ('full_name', 'email', 'is_staff', 'is_superuser')
     list_display_links = ('full_name', 'email')
-    list_filter = ('batch', 'year')
+    list_filter = ('department', 'year')
     fieldsets = (
         (
             None, {
-                'fields': ('email', 'usn', 'password', 'batch', 'year')
+                'fields': ('email', 'usn', 'password', 'department', 'year')
             }
         ),
         ('Personal Info', {

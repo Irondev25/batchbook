@@ -2,13 +2,16 @@ import logging
 
 from django import forms
 from django.contrib.auth import password_validation, get_user_model
+from django.contrib.admin.widgets import AdminDateWidget
 from django.contrib.auth.forms import (
     ReadOnlyPasswordHashField,
+    ReadOnlyPasswordHashWidget,
     AuthenticationForm, 
     PasswordResetForm as BasePasswordResetForm,
     SetPasswordForm as BaseSetPasswordForm,
     PasswordChangeForm as BasePasswordChangeForm,
-    UserCreationForm as BaseUserCreationForm
+    UserCreationForm as BaseUserCreationForm,
+    UserChangeForm as BaseUserChangeForm
 )
 
 from .models import Student
@@ -16,6 +19,25 @@ from .utils import ActivationMailFormMixin
 
 
 logger = logging.getLogger(__name__)
+YEAR = (1900, 1901, 1902, 1903, 1904, 1905, 1906, 1907, 1908, 1909, 1910, 
+        1911, 1912, 1913, 1914, 1915, 1916, 1917, 1918, 1919, 1920, 1921, 
+        1922, 1923, 1924, 1925, 1926, 1927, 1928, 1929, 1930, 1931, 1932, 
+        1933, 1934, 1935, 1936, 1937, 1938, 1939, 1940, 1941, 1942, 1943, 
+        1944, 1945, 1946, 1947, 1948, 1949, 1950, 1951, 1952, 1953, 1954, 
+        1955, 1956, 1957, 1958, 1959, 1960, 1961, 1962, 1963, 1964, 1965, 
+        1966, 1967, 1968, 1969, 1970, 1971, 1972, 1973, 1974,
+        1975, 1976, 1977, 1978, 1979, 1980, 1981, 1982, 1983, 1984, 1985, 
+        1986, 1987, 1988, 1989, 1990, 1991, 1992, 1993, 1994, 1995, 1996, 
+        1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 
+        2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 
+        2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026, 2027, 2028, 2029, 
+        2030, 2031, 2032, 2033, 2034, 2035, 2036, 2037, 2038, 2039, 2040, 
+        2041, 2042, 2043, 2044, 2045, 2046, 2047, 2048, 2049, 2050)
+MONTHS = {
+    1: 'jan', 2: 'feb', 3: 'mar', 4: 'apr',
+    5: 'may', 6: 'jun', 7: 'jul', 8: 'aug',
+    9: 'sep', 10: 'oct', 11: 'nov', 12: 'dec'
+}
 
 
 class UserCreationForm(ActivationMailFormMixin ,BaseUserCreationForm):
@@ -32,16 +54,29 @@ class UserCreationForm(ActivationMailFormMixin ,BaseUserCreationForm):
 
     class Meta(BaseUserCreationForm.Meta):
         model = get_user_model()
-        fields = ('email', 'usn')
+        fields = ('email', 'usn', 'first_name', 'middle_name', 'last_name', 'department',
+                    'dob', 'year')
         widgets = {
-            'email': forms.TextInput(attrs={
+            'email': forms.EmailInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Enter your college email'
+                'placeholder': 'Enter your college E-mail'
             }),
             'usn': forms.TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Enter your USN'
-            })
+                'placeholder': 'Enter your college USN'
+            }),
+            'first_name': forms.TextInput(attrs={
+                'class': 'form-control'
+            }),
+            'middle_name': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Not compulsory'
+            }),
+            'last_name': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Not compulsory'
+            }),
+            'dob': forms.SelectDateWidget(years=YEAR, months=MONTHS)
         }
     
     def clean_usn(self):
@@ -73,22 +108,28 @@ class UserCreationForm(ActivationMailFormMixin ,BaseUserCreationForm):
 
 
 class UserChangeForm(forms.ModelForm):
-    """A form for updating users. Includes all the fields on
-    the user, but replaces the password field with admin's
-    password hash display field.
-    """
-    password = ReadOnlyPasswordHashField()
-
     class Meta:
-        model = Student
-        fields = ('email', 'usn', 'first_name', 'middle_name', 'last_name', 
-                  'dob', 'batch', 'profile_img', 'year')
-
-    def clean_password(self):
-        # Regardless of what the user provides, return the initial value.
-        # This is done here, rather than on the field, because the
-        # field does not have access to the initial value
-        return self.initial["password"]
+        model = get_user_model()
+        fields = ('email', 'usn', 'first_name', 'middle_name', 'last_name',
+                  'profile_img', 'dob', 'department', 'year')
+        widgets = {
+            'email': forms.EmailInput(attrs={
+                'class': 'form-control'
+            }),
+            'usn': forms.TextInput(attrs={
+                'class': 'form-control'
+            }),
+            'first_name': forms.TextInput(attrs={
+                'class': 'form-control'
+            }),
+            'middle_name': forms.TextInput(attrs={
+                'class': 'form-control'
+            }),
+            'last_name': forms.TextInput(attrs={
+                'class': 'form-control'
+            }),
+            'dob': forms.SelectDateWidget(years=YEAR, months=MONTHS)
+        }
 
 
 class LoginForm(AuthenticationForm):

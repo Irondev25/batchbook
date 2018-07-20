@@ -15,7 +15,7 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user, get_user_model, logout
 from django.contrib.auth.tokens import default_token_generator as token_generator
-from django.contrib.auth.decorators import 
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 from django.template.response import TemplateResponse
@@ -26,33 +26,14 @@ from django.utils.http import urlsafe_base64_decode
 
 from django.urls import reverse_lazy
 
-from django.views.generic import View
+from django.views.generic import View, DetailView, TemplateView
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.cache import never_cache
 
 
-from .forms import LoginForm, UserCreationForm, ResendActivationEmailForm
+from .forms import LoginForm, UserCreationForm, ResendActivationEmailForm, UserChangeForm
 from .utils import MailContextViewMixin
-
-# Create your views here.
-
-# @sensitive_post_parameters('password')
-# def login_view(request):
-#     form = LoginForm(request.POST or None)
-#     context = {'form':form}
-#     next = request.GET.get('next')
-#     print(next)
-#     if form.is_valid():
-#         email = request.POST.get('email')
-#         password = request.POST.get('password')
-#         user = authenticate(request, email=email, password=password)
-#         if user is not None:
-#             login(request, user)
-#             return (redirect(next) or "/")
-#         else:
-#             context['non_field_errors'] = "login creadentials didn't match."
-#     return render(request, 'accounts/login.html', context)
 
 
 def logout_view(request):
@@ -194,3 +175,25 @@ class ResendActivationEmail(MailContextViewMixin, View):
         return redirect(self.success_url)
 
 
+class StudentProfileView(LoginRequiredMixin, TemplateView):
+    login_url = reverse_lazy('student:login')
+    template_name = 'accounts/user_profile.html'
+
+
+
+class StudentChangeView(LoginRequiredMixin, View):
+    login_url = reverse_lazy('student:login')
+    form_class = UserChangeForm
+    template_name = 'accounts/profile_form.html'
+
+    def get(self, request):
+        user = get_user(request)
+        return render(request, self.template_name, {'form': self.form_class(instance=user)})
+    
+    def post(self, request):
+        user = get_user(request)
+        bound_form = self.form_class(request.POST, instance=user)
+        if bound_form.is_valid():
+            user = bound_form.save()
+            return redirect(user)
+        return render(request, self.template_name, {'form':bound_form})

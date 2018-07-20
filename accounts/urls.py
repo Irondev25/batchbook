@@ -4,7 +4,9 @@ from django.views.generic import RedirectView, TemplateView
 
 from .views import (Login, logout_view, 
                     DisableAccount, CreateAccount, 
-                    ActivateAccount, ResendActivationEmail)
+                    ActivateAccount, ResendActivationEmail,
+                    StudentProfileView,
+                    StudentChangeView)
 from .forms import (LoginForm, PasswordResetForm, 
                     SetPasswordForm, PasswordChangeForm)
 
@@ -81,11 +83,6 @@ urlpatterns = [
         ResendActivationEmail.as_view(),
         name='resend_activation'
     ),
-    path(
-        '', RedirectView.as_view(
-            pattern_name='student:login',
-            permanent=False
-        )
-    ),
-
+    path('', StudentProfileView.as_view(), name='profile'),
+    path('edit/', StudentChangeView.as_view(), name='profile_edit')
 ]

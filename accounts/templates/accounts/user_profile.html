@@ -1,0 +1,19 @@
+{% extends parent_template|default:'accounts/base_accounts.html' %}
+
+{% block title %}
+{{ block.super }} - {{user.get_short_name}}'s Profile
+{% endblock title %}
+
+{% block content %}
+<h1>Profile Detail</h1>
+<img src="{{user.profile_img.url|default:'media/profile_pics/default/default.jpg'}}" alt="Opps!" width="200" height="200">
+<h3>Name:       {% firstof user.get_full_name user.get_short_name %}</h3>
+<h3>Email:      {{user.get_email}}</h3>
+<h3>USN:        {{user.usn}}</h3>
+<h3>Birth Date: {{user.dob|date:"d/m/y"}}</h3>
+<h3>Department: {{user.department}}</h3>
+<h3>Year:       {{user.year}} </h3>
+<button class="btn btn-outline-primary"><a href="{% url 'student:profile_edit' %}">
+    Edit Profile
+</a></button>
+{% endblock content %}

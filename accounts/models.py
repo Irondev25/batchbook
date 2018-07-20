@@ -2,6 +2,7 @@ import random
 import os
 
 from django.db import models
+from django.urls import reverse
 from django.contrib.auth.models import (
     BaseUserManager, AbstractBaseUser, PermissionsMixin
 )
@@ -80,7 +81,7 @@ def upload_image_path(instance, filename):
 class Student(AbstractBaseUser, PermissionsMixin):
     INFORMATION_SCIENCE = 'ISE'
     COMPUTER_SCIENCE = 'CSE'
-    BATCH = (
+    DEPARTMENT = (
         (INFORMATION_SCIENCE, 'Information Science Engg.'),
         (COMPUTER_SCIENCE, 'Computer Science Engg.'),
     )
@@ -104,14 +105,14 @@ class Student(AbstractBaseUser, PermissionsMixin):
     middle_name = models.CharField(max_length=30, blank=True, null=True)
     last_name = models.CharField(max_length=30, blank=True, null=True)
     dob = models.DateField("date of birth", null=True)
-    batch = models.CharField(
+    department = models.CharField(
         max_length=3,
-        choices = BATCH,
+        choices = DEPARTMENT,
         null=True
     )
     profile_img = models.ImageField(
         upload_to=upload_image_path,
-        blank=True, null=True
+        default='profile_pics/default/default.jpg'
     )
     year = models.IntegerField(
         'Year',
@@ -140,16 +141,19 @@ class Student(AbstractBaseUser, PermissionsMixin):
         return self.first_name
     
     def get_full_name(self):
-        if self.middle_name != '' or self.middle_name !=None:
+        if self.middle_name != None and self.last_name != None:
+            return "{fn} {mn} {ln}".format(
+                fn = self.first_name,
+                mn = self.middle_name,
+                ln = self.last_name
+            )
+        elif self.last_name != None:
             return "{fn} {ln}".format(
                 fn=self.first_name,
                 ln=self.last_name
             )
-        return "{fn} {mn} {ln}".format(
-            fn=self.first_name,
-            mn=self.middle_name,
-            ln=self.last_name
-        )
+        else:
+            return self.get_short_name()
     
     def get_email(self):
         return self.email
@@ -163,3 +167,6 @@ class Student(AbstractBaseUser, PermissionsMixin):
         "Does the user have permissions to view the app `app_label`?"
         # Simplest possible answer: Yes, always
         return True
+    
+    def get_absolute_url(self):
+        return reverse('student:profile')
