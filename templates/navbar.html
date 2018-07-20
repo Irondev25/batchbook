@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
-        <a class="navbar-brand" href="#">BatchBook</a>
+        <a class="navbar-brand" href="{% url 'index' %}">BatchBook</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
             aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -16,18 +16,6 @@
                 <li class="nav-item">
                     <a class="nav-link" href="#">Link</a>
                 </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true"
-                        aria-expanded="false">
-                        Dropdown
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="#">Action</a>
-                        <a class="dropdown-item" href="#">Another action</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#">Something else here</a>
-                    </div>
-                </li>
                 <li class="nav-item">
                     <a class="nav-link disabled" href="#">Disabled</a>
                 </li>
@@ -35,11 +23,35 @@
             <ul class="navbar-nav mr-auto navbar-right">
                 {% if user.is_authenticated %}
                 <li class="nav-item">
+                    <a href="{% url 'student:profile' %}" class="nav-link">Welcome {{user.first_name}}</a>
+                </li>
+                <li class="nav-item">
                     <a href="{% url 'student:logout' %}?next={{request.path}}" class="nav-link">Logout</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true"
+                        aria-expanded="false">
+                        {% if user.is_authenticated %}
+                        <img src="{{user.profile_img.url}}" alt="options" width="20" height="20">
+                        {% else %}
+                        <img src="/media/default/default.jpg" width="20" height="20">
+                        {% endif %}
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="{% url 'student:pw_change' %}">Change Password</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="{% url 'student:disable' %}">Disable Account</a>
+                    </div>
                 </li>
                 {% else %}
                 <li class="nav-item">
                     <a href="{% url 'student:login' %}?next={{request.path}}" class="nav-link">Login</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'student:pw_reset_start' %}" class="nav-link">Reset Password</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'student:create' %}" class="nav-link">Register</a>
                 </li>
                 {% endif %}
             </ul>

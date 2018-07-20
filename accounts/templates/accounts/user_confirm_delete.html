@@ -1,0 +1,25 @@
+{% extends parent_template|default:"accounts/base_accounts.html" %}
+
+{% block title %}
+{{ block.super }} - Disable Account
+{% endblock title %}
+
+{% block content %}
+<div class="row auth-form">
+    <div class="col-md-4"></div>
+    <div class="col-md-4">
+        <p>Disable your account?</p>
+        <p>This cannot be undone</p>
+        <form action="{% url 'student:disable' %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-outline-danger">
+                Disable Account
+            </button>
+            <button class="btn btn-outline-primary">
+                <a href="{% url 'index' %}">cancel</a>
+            </button>
+        </form>
+    </div>
+    <div class="col-md-4"></div>
+</div>
+{% endblock content %}

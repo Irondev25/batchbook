@@ -1,21 +1,29 @@
 {% extends parent_template|default:'accounts/base_accounts.html' %}
 
+{% load staticfiles %}
+
 {% block title %}
 {{ block.super }} - Login
 {% endblock title %}
 
+{% block css_block %}
+<link rel="stylesheet" href="{% static 'accounts/style.css' %}">
+{% endblock css_block %}
+
 {% block content %}
-<div class="row">
+<div class="row auth-form">
     <div class="col-md-4"></div>
     <div class="col-md-4">
-        <form action="{% url 'student:login' %}" method="post">
-            {% csrf_token %}
-            {{form.as_p}}
-            {% if next %}
-                <input type="hidden" name="next" value="{{next}}"> 
-            {% endif %}
-            <button type="submit" class="btn btn-outline-primary">Login</button>
-        </form>
+        {% include "accounts/login_form.html" %}
+        <p>
+            <a href="{% url 'student:pw_reset_start' %}">
+                Forgotten Password?
+            </a>
+            <a href="{% url 'student:create' %}">Register New Account</a>
+            <a href="{% url 'student:resend_activation' %}">
+                Lost Activation E-mail
+            </a>
+        </p>
     </div> 
     <div class="col-md-4"></div>
 </div>
