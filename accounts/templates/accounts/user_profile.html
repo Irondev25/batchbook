@@ -13,7 +13,4 @@
 <h3>Birth Date: {{user.dob|date:"d/m/y"}}</h3>
 <h3>Department: {{user.department}}</h3>
 <h3>Year:       {{user.year}} </h3>
-<a href="{% url 'student:profile_edit' %}">
-    Edit Profile
-</a>
 {% endblock content %}

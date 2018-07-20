@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 
 from django.conf import settings
 
@@ -34,6 +34,9 @@ from django.views.decorators.cache import never_cache
 
 from .forms import LoginForm, UserCreationForm, ResendActivationEmailForm, UserChangeForm
 from .utils import MailContextViewMixin
+
+
+User = get_user_model()
 
 
 def logout_view(request):
@@ -175,9 +178,27 @@ class ResendActivationEmail(MailContextViewMixin, View):
         return redirect(self.success_url)
 
 
+
 class StudentProfileView(LoginRequiredMixin, TemplateView):
     login_url = reverse_lazy('student:login')
     template_name = 'accounts/user_profile.html'
+
+    # def get(self, request, usn=None, *args, **kwargs):
+    #     print(usn)
+    #     if usn is not None:
+    #         kwargs.update({
+    #             'usn':usn
+    #         })
+    #     super().get(*args, **kwargs)
+    
+    # def get_object(self, queryset=None):
+    #     if 'usn' in self.kwargs:
+    #         usn = self.kwargs.get('usn')
+    #         user = User.objects.get(usn__iexact==usn)
+    #         return user
+    #     return None
+
+        
 
 
 
@@ -197,3 +218,25 @@ class StudentChangeView(LoginRequiredMixin, View):
             user = bound_form.save()
             return redirect(user)
         return render(request, self.template_name, {'form':bound_form})
+
+
+class PublicProfile(LoginRequiredMixin ,DetailView):
+    login_url = reverse_lazy('student:login')
+    model = get_user_model()
+    template_name = 'accounts/profile_public.html'
+    context_object_name = 'student'
+
+    def get(self, request, usn=None, *args, **kwargs):
+        if usn is not None:
+            kwargs.update({'usn':usn})
+        user = self.get_object()
+        context = {
+            self.context_object_name : user
+        }
+        return render(request, self.template_name, context)
+    
+    def get_object(self, queryset=None):
+        if 'usn' in self.kwargs:
+            usn = self.kwargs.get('usn')
+        user = get_object_or_404(User, usn__iexact=usn)
+        return user

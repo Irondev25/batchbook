@@ -6,7 +6,7 @@ from .views import (Login, logout_view,
                     DisableAccount, CreateAccount, 
                     ActivateAccount, ResendActivationEmail,
                     StudentProfileView,
-                    StudentChangeView)
+                    StudentChangeView, PublicProfile)
 from .forms import (LoginForm, PasswordResetForm, 
                     SetPasswordForm, PasswordChangeForm)
 
@@ -83,6 +83,7 @@ urlpatterns = [
         ResendActivationEmail.as_view(),
         name='resend_activation'
     ),
-    path('', StudentProfileView.as_view(), name='profile'),
-    path('edit/', StudentChangeView.as_view(), name='profile_edit')
+    path('profile/', StudentProfileView.as_view(), name='profile'),
+    path('profile/edit/', StudentChangeView.as_view(), name='profile_edit'),
+    re_path(r'^(?P<usn>1(BM|bm)[0-9]{2}[A-Za-z]{2,3}[0-9]{3})/$', PublicProfile.as_view(), name='profile_public')
 ]
