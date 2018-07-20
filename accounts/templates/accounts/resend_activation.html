@@ -1,0 +1,22 @@
+{% extends parent_template|default:'accounts/base_accounts.html' %}
+
+{% block title %}
+{{ block.super }} - Resend Activation E-Mail
+{% endblock title %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4"></div>
+    <div class="col-md-4">
+        <p>Resend your account activation email.</p>
+    </div>
+    <form action="{% url 'student:resend_activation' %}" method="post">
+        {% csrf_token %}
+        {{form.as_p}}
+        <button type="submit" class="btn btn-outline-primary">
+            Resend Activation E-Mail
+        </button>
+    </form>
+    <div class="col-md-4"></div>
+</div>
+{% endblock content %}

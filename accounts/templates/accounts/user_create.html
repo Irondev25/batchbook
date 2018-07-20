@@ -1,0 +1,26 @@
+{% extends parent_template|default:"accounts/base_accounts.html" %}
+
+{% block title %}
+{{ block.super }} - Create Accounts
+{% endblock title %}
+
+{% block content %}
+<div class="row auth-form">
+    <div class="col-md-4"></div>
+    <div class="col-md-4">
+        <form action="{% url 'student:create' %}" method="post">
+            {% csrf_token %}
+            {{form.as_p}}
+            <button type="submit" class="btn btn-outline-primary">
+                Create New Account
+            </button>
+        </form>
+        <p>
+            <a href="{% url 'student:resend_activation' %}">
+                Lost Activation E-Mail
+            </a>
+        </p>
+    </div>
+    <div class="col-md-4"></div>
+</div>
+{% endblock content %}

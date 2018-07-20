@@ -1,11 +1,12 @@
 from django.contrib.auth import views as auth_views
 from django.urls import path, include, reverse_lazy, re_path
-from django.views.generic import RedirectView
+from django.views.generic import RedirectView, TemplateView
 
-
-
-from .views import Login, logout_view
-from .forms import LoginForm, PasswordResetForm, SetPasswordForm, PasswordChangeForm
+from .views import (Login, logout_view, 
+                    DisableAccount, CreateAccount, 
+                    ActivateAccount, ResendActivationEmail)
+from .forms import (LoginForm, PasswordResetForm, 
+                    SetPasswordForm, PasswordChangeForm)
 
 app_name = 'student'
 
@@ -62,13 +63,29 @@ password_urls = [
 
 
 urlpatterns = [
+    path('login/', Login.as_view(), name='login'),
+    path('logout/', logout_view, name='logout'),
+    path('password/', include(password_urls)),
+    path('disable/', DisableAccount.as_view(), name='disable'),
+    path('create/', CreateAccount.as_view(), name='create'),
+    path('create/done/', TemplateView.as_view(
+            template_name = 'accounts/user_create_done.html'
+        ),
+        name='create_done'
+    ),
+    re_path(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
+        ActivateAccount.as_view(),
+        name='activate'),
+    path(
+        'activate/resend/',
+        ResendActivationEmail.as_view(),
+        name='resend_activation'
+    ),
     path(
         '', RedirectView.as_view(
             pattern_name='student:login',
             permanent=False
         )
     ),
-    path('login/', Login.as_view(), name='login'),
-    path('logout/', logout_view, name='logout'),
-    path('password/', include(password_urls))
+
 ]

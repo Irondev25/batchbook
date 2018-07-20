@@ -33,7 +33,7 @@
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <a class="dropdown-item" href="{% url 'student:pw_change' %}">Change Password</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#">Something else here</a>
+                        <a class="dropdown-item" href="{% url 'student:disable' %}">Disable Account</a>
                     </div>
                 </li>
                 {% else %}
@@ -42,6 +42,9 @@
                 </li>
                 <li class="nav-item">
                     <a href="{% url 'student:pw_reset_start' %}" class="nav-link">Reset Password</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'student:create' %}" class="nav-link">Register</a>
                 </li>
                 {% endif %}
             </ul>

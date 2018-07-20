@@ -93,6 +93,7 @@ class Student(AbstractBaseUser, PermissionsMixin):
     )
     usn = models.CharField(
         max_length=11,
+        unique=True,
         validators=[RegexValidator(
             regex=USN_REGEX,
             message='Please enter valid USN.(must be in capital letter)',  

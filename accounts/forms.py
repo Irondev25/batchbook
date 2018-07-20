@@ -1,19 +1,26 @@
+import logging
+
 from django import forms
-from django.contrib.auth import password_validation
+from django.contrib.auth import password_validation, get_user_model
 from django.contrib.auth.forms import (
     ReadOnlyPasswordHashField,
     AuthenticationForm, 
     PasswordResetForm as BasePasswordResetForm,
     SetPasswordForm as BaseSetPasswordForm,
-    PasswordChangeForm as BasePasswordChangeForm
+    PasswordChangeForm as BasePasswordChangeForm,
+    UserCreationForm as BaseUserCreationForm
 )
 
 from .models import Student
+from .utils import ActivationMailFormMixin
 
 
-class UserCreationForm(forms.ModelForm):
-    """A form for creating new users. Includes all the required
-    fields, plus a repeated password."""
+logger = logging.getLogger(__name__)
+
+
+class UserCreationForm(ActivationMailFormMixin ,BaseUserCreationForm):
+    mail_validation_error = ('User created. Could not send activation '
+                             'email. Please try again later. (Sorry!)')
     password1 = forms.CharField(label='Password',
                                 widget=forms.PasswordInput(
                                     attrs={'class':'form-control'}
@@ -23,24 +30,25 @@ class UserCreationForm(forms.ModelForm):
                                     'class':'form-control'
                                 }))
 
-    class Meta:
-        model = Student
+    class Meta(BaseUserCreationForm.Meta):
+        model = get_user_model()
         fields = ('email', 'usn')
-    
-    def clean_password2(self):
-        password1= self.cleaned_data.get('password1')
-        password2= self.cleaned_data.get('password2')
-        if password1 and password2 and password1 != password2:
-            raise forms.ValidationError(
-                "Password Doesn't match"
-            )
-        return password2
+        widgets = {
+            'email': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter your college email'
+            }),
+            'usn': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter your USN'
+            })
+        }
     
     def clean_usn(self):
         usn = self.cleaned_data['usn']
         if usn is not None:
             return usn.upper()
-        
+
     def clean_email(self):
         email = self.cleaned_data['email']
         email_domain = email.split('@')[1]
@@ -50,11 +58,17 @@ class UserCreationForm(forms.ModelForm):
             )
         return email
     
-    def save(self, commit=True):
+    def save(self, **kwargs):
         user = super().save(commit=False)
-        user.set_password(self.cleaned_data['password2'])
-        if commit:
-            user.save()
+        if not user.pk:
+            user.is_active = False
+            send_mail = True
+        else:
+            send_mail = False
+        user.save()
+        self.save_m2m()
+        if send_mail:
+            self.send_mail(user=user, **kwargs)
         return user
 
 
@@ -145,3 +159,29 @@ class PasswordChangeForm(SetPasswordForm, BasePasswordChangeForm):
     )
 
     field_order = ['old_password', 'new_password1', 'new_password2']
+
+
+class ResendActivationEmailForm(ActivationMailFormMixin, forms.Form):
+    email = forms.EmailField()
+
+    mail_validation_error = (
+        'Could not re-send activation email. '
+        'Please try again later. (Sorry!)'
+    )
+
+    def save(self, **kwargs):
+        User = get_user_model()
+        try:
+            user = User.objects.get(
+                email=self.cleaned_data['email']
+            )
+        except:
+            logger.warning(
+                'Resend Activation: No user with '
+                'email: {}.'.format(
+                    self.cleaned_data['email']
+                )
+            )
+            return None    
+        self.send_mail(user=user, **kwargs)
+        return user

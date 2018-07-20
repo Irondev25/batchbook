@@ -1,0 +1,12 @@
+{% extends parent_template|default:'accounts/base_accounts.html' %}
+
+{% block title %}
+{{ block.super }} - Student Creation Done
+{% endblock title %}
+
+{% block content %}
+<div class="row" style="margin-top:5%;">
+    <p class="text-center">Your account has been created!</p><br>
+    <p class="text-center">Please check your email for the activation link.</p>
+</div>
+{% endblock content %}
