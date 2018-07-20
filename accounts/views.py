@@ -86,7 +86,7 @@ class CreateAccount(MailContextViewMixin, View):
     @method_decorator(sensitive_post_parameters(
         'password1', 'password2'))
     def post(self, request):
-        bound_form = self.form_class(request.POST)
+        bound_form = self.form_class(request.POST, request.FILES)
         if bound_form.is_valid():
             # not catching returned user
             bound_form.save(
@@ -192,7 +192,7 @@ class StudentChangeView(LoginRequiredMixin, View):
     
     def post(self, request):
         user = get_user(request)
-        bound_form = self.form_class(request.POST, instance=user)
+        bound_form = self.form_class(request.POST, request.FILES,instance=user)
         if bound_form.is_valid():
             user = bound_form.save()
             return redirect(user)

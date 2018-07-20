@@ -2,7 +2,6 @@ import logging
 
 from django import forms
 from django.contrib.auth import password_validation, get_user_model
-from django.contrib.admin.widgets import AdminDateWidget
 from django.contrib.auth.forms import (
     ReadOnlyPasswordHashField,
     ReadOnlyPasswordHashWidget,
@@ -13,6 +12,8 @@ from django.contrib.auth.forms import (
     UserCreationForm as BaseUserCreationForm,
     UserChangeForm as BaseUserChangeForm
 )
+
+from django.urls import reverse
 
 from .models import Student
 from .utils import ActivationMailFormMixin
@@ -55,7 +56,7 @@ class UserCreationForm(ActivationMailFormMixin ,BaseUserCreationForm):
     class Meta(BaseUserCreationForm.Meta):
         model = get_user_model()
         fields = ('email', 'usn', 'first_name', 'middle_name', 'last_name', 'department',
-                    'dob', 'year')
+                    'dob', 'year', 'profile_img')
         widgets = {
             'email': forms.EmailInput(attrs={
                 'class': 'form-control',
@@ -108,9 +109,18 @@ class UserCreationForm(ActivationMailFormMixin ,BaseUserCreationForm):
 
 
 class UserChangeForm(forms.ModelForm):
+
+    password = ReadOnlyPasswordHashField(
+        label="Password",
+        help_text=
+            "Raw passwords are not stored, so there is no way to see this "
+            "password, but you can change the password using "
+            "<a href=\"{}\">this form</a>."
+        ,
+    )
     class Meta:
         model = get_user_model()
-        fields = ('email', 'usn', 'first_name', 'middle_name', 'last_name',
+        fields = ('email', 'usn', 'password','first_name', 'middle_name', 'last_name',
                   'profile_img', 'dob', 'department', 'year')
         widgets = {
             'email': forms.EmailInput(attrs={
@@ -128,8 +138,22 @@ class UserChangeForm(forms.ModelForm):
             'last_name': forms.TextInput(attrs={
                 'class': 'form-control'
             }),
-            'dob': forms.SelectDateWidget(years=YEAR, months=MONTHS)
+            'dob': forms.SelectDateWidget(years=YEAR, months=MONTHS),
         }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['password'].help_text = self.fields['password'].help_text.format(
+            reverse('student:pw_change'))
+        f = self.fields.get('user_permissions')
+        if f is not None:
+            f.queryset = f.queryset.select_related('content_type')
+
+    def clean_password(self):
+        # Regardless of what the user provides, return the initial value.
+        # This is done here, rather than on the field, because the
+        # field does not have access to the initial value
+        return self.initial["password"]
 
 
 class LoginForm(AuthenticationForm):
