@@ -25,5 +25,6 @@ admin.site.site_title = 'BatchBook'
 urlpatterns = [
     path('admin/', admin.site.urls),
     re_path(r'^student/', include('accounts.urls')),
+    path('poll/', include('polls.urls')),
     re_path(r'^$', TemplateView.as_view(template_name='batchbook/index.html'), name='index'),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS[0])

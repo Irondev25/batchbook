@@ -1,0 +1,50 @@
+{% extends parent_template|default:'polls/base_poll.html' %}
+
+{% block title %}
+{{ block.super }}  - Poll Detail
+{% endblock title %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 page">
+        <header>
+            <h2>{{poll.question}}</h2>
+            <p>by {{poll.author.get_full_name}} on {{poll.pub_date|date:'l, j F Y'}}
+                {% if request.user == poll.author or user.is_superuser %}
+                <a class="badge badge-pill badge-danger" href="{% url 'poll:poll_delete' poll.pk %}">Delete</a>
+                <a class="badge badge-pill badge-primary" href="{% url 'poll:poll_update' poll.pk %}">Update</a>
+                {% else %}
+                {% endif %}
+            </p>
+        </header>
+        <form action="{% url 'poll:poll_detail' poll.pk %}" method="post">
+            {% csrf_token %} {% for choice in poll.choices.all %}
+            {% if choice.choice_text != '' %}
+            <div class="form-check">
+                <input type="radio" name="choice" id="choice{{forloop.counter}}" value="{{choice.pk}}">
+                <label for="choice{{forloop.counter}}">{{choice.choice_text}}</label>
+            </div>
+            {% endif %}
+            {% empty %}
+            <p>
+                <a href="{% url 'poll:choice_create' poll.pk %}">Add Choices</a>
+            </p>
+            {% endfor %} {% if poll.choices.count %}
+            <button type="submit" class="btn btn-outline-primary btn-sm">Vote</button>
+            {% else %} {% endif %}
+        </form>
+    </div>
+    <div class="col-md-4">
+        <div style="margin-top:5%;">
+            <p>
+                <a href="{% url 'poll:poll_result' poll.pk %}">View Result</a>
+            </p>
+            {% if request.user == poll.author %}
+            <p>
+                <a href="{% url 'poll:choice_create' poll.pk %}">Add more Choices</a>
+            </p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock content %}

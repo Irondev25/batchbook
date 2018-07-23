@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'django_extensions',
     'accounts',
+    'polls',
 ]
 
 MIDDLEWARE = [

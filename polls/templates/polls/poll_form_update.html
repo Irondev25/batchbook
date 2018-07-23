@@ -1,0 +1,15 @@
+{% extends parent_template|default:'polls/base_poll.html' %}
+
+{% block title %}
+{{ block.super }} - Update Poll
+{% endblock title %}
+
+{% block content %}
+<h1>Update Poll</h1>
+<form action="{% url 'poll:poll_update' poll.pk %}" method="post">
+    {% csrf_token %}
+    {{form.as_p}}
+    {{formset.as_p}}
+    <button type="submit" class="btn btn-outline-primary">Update Poll</button>
+</form>
+{% endblock content %}

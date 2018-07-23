@@ -1,0 +1,5 @@
+{% extends parent_template|default:'base.html' %}
+{% load staticfiles %}
+{% block css_block %}
+<link rel="stylesheet" href="{% static 'poll_style.css' %}">
+{% endblock css_block %}

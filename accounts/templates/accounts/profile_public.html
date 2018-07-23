@@ -8,7 +8,7 @@
 <h3>Name: {% firstof student.get_full_name student.get_short_name %}</h3>
 <h3>Email: {{student.get_email}}</h3>
 <h3>USN: {{student.usn}}</h3>
-<h3>Birth Date: {{student.dob|date:"d/m/y"}}</h3>
+<h3>Birth Date: {{student.dob|date:"l, j F Y"}}</h3>
 <h3>Department: {{student.department}}</h3>
 <h3>Year: {{student.year}} </h3>
 {% endblock content %}

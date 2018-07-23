@@ -1,0 +1,15 @@
+{% extends parent_template|default:'polls/base_poll.html' %}
+
+{% block title %}
+{{ block.super }} - Delete Poll
+{% endblock title %}
+
+{% block content %}
+<h1>Are you sure you want to delete this Poll:</h1>
+<h2>{{poll.question}}</h2>
+<form action="{% url 'poll:poll_delete' poll.pk %}" method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-outline-danger">Delete</button>
+    <button class="btn btn-outline-default"><a href="{{poll.get_absolute_url}}">Cancle</a></button>
+</form>
+{% endblock content %}

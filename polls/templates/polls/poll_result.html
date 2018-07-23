@@ -1,0 +1,16 @@
+{% extends parent_template|default:'polls/base_poll.html' %}
+
+{% block title %}
+{{ block.super }} - Poll Result
+{% endblock title %}
+
+{% block content %}
+<h1>Poll Result</h1>
+<h2>{{poll.question}}</h2>
+{% for choice in poll.choices.all %}
+{% if choice.choice_text != '' %}
+<p>{{choice.choice_text}} - {{choice.vote}}</p>
+{% else %}
+{% endif %}
+{% endfor %}
+{% endblock content %}
