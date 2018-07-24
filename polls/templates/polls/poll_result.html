@@ -10,7 +10,14 @@
 {% for choice in poll.choices.all %}
 {% if choice.choice_text != '' %}
 <p>{{choice.choice_text}} - {{choice.vote}}</p>
-{% else %}
+<ul>
+    {% for voter in poll.votedata_set.all %}
+        {% if voter.choice == choice.choice_text %}
+        <li>{{voter.user}}</li>
+        {% endif %}
+    {% endfor %}
+</ul>
 {% endif %}
 {% endfor %}
+<p><a href="{{poll.get_absolute_url}}">go back to poll</a></p>
 {% endblock content %}

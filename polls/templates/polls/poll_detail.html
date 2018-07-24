@@ -17,15 +17,14 @@
                 {% endif %}
             </p>
         </header>
+        {% if poll_permission %}
         <form action="{% url 'poll:poll_detail' poll.pk %}" method="post">
-            {% csrf_token %} {% for choice in poll.choices.all %}
-            {% if choice.choice_text != '' %}
+            {% csrf_token %} {% for choice in poll.choices.all %} {% if choice.choice_text != '' %}
             <div class="form-check">
                 <input type="radio" name="choice" id="choice{{forloop.counter}}" value="{{choice.pk}}">
                 <label for="choice{{forloop.counter}}">{{choice.choice_text}}</label>
             </div>
-            {% endif %}
-            {% empty %}
+            {% endif %} {% empty %}
             <p>
                 <a href="{% url 'poll:choice_create' poll.pk %}">Add Choices</a>
             </p>
@@ -33,17 +32,18 @@
             <button type="submit" class="btn btn-outline-primary btn-sm">Vote</button>
             {% else %} {% endif %}
         </form>
+        {% else %}
+        <p>
+            <em>You have already vote</em>
+        </p>
+        <p>Please go to vote result to see results.</p>
+        {% endif %}
     </div>
     <div class="col-md-4">
         <div style="margin-top:5%;">
             <p>
                 <a href="{% url 'poll:poll_result' poll.pk %}">View Result</a>
             </p>
-            {% if request.user == poll.author %}
-            <p>
-                <a href="{% url 'poll:choice_create' poll.pk %}">Add more Choices</a>
-            </p>
-            {% endif %}
         </div>
     </div>
 </div>

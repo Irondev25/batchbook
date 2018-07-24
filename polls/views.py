@@ -9,7 +9,7 @@ from django.views.generic import DetailView, CreateView, View, UpdateView, Delet
 
 
 
-from .models import Poll, Choice
+from .models import Poll, Choice, VoteData
 from .forms import PollForm, ChoiceForm
 
 # Create your views here.
@@ -24,18 +24,39 @@ class PollList(ListView):
 
 
 
-class PollDetail(DetailView):
+class PollDetail(LoginRequiredMixin ,DetailView):
     model = Poll
     template_name='polls/poll_detail.html'
     context_object_name = 'poll'
 
+
     def post(self, request, pk):
         poll = get_object_or_404(Poll, pk=pk)
         choice_id = request.POST.get('choice')
-        print(choice_id)
         choice = get_object_or_404(Choice, pk=choice_id)
         choice.upvote()
+        vote_data = VoteData(poll=poll, user=request.user, choice=choice.choice_text)
+        vote_data.save()
         return redirect('poll:poll_result', pk=pk)
+    
+    # def get_context_data(self, **kwargs):
+    #     poll_permission = self.model.get_vote_permission(self.request)
+    #     kwargs.update({
+    #         'poll_permission': poll_permission
+    #     })
+    #     return super().get_context_data(**kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = dict()
+        user = get_user(self.request)
+        if user.is_authenticated:
+            if self.object.voter.all().filter(email=user.email).exists():
+                poll_permission = False
+            else:
+                poll_permission = True
+            context.update({'poll_permission': poll_permission})
+        context.update(kwargs)
+        return super().get_context_data(**context)
 
 
 
@@ -89,15 +110,17 @@ class PollDelete(LoginRequiredMixin, DeleteView):
     template_name = 'polls/poll_confirm_delete.html'
     success_url = reverse_lazy('poll:poll_list')
 
-class PollResult(TemplateView):
+class PollResult(LoginRequiredMixin, TemplateView):
     template_name = 'polls/poll_result.html'
 
     def get_context_data(self, **kwargs):
         poll_pk = self.kwargs.get('pk')
         poll = get_object_or_404(Poll, pk=poll_pk)
-        kwargs.update({'poll':poll})
+        kwargs.update({
+            'poll': poll
+        })
         return super().get_context_data(**kwargs)
-
+        
 
 class ChoiceCreate(LoginRequiredMixin ,CreateView):
     model = Choice

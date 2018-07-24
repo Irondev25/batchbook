@@ -28,3 +28,10 @@ urlpatterns = [
     path('poll/', include('polls.urls')),
     re_path(r'^$', TemplateView.as_view(template_name='batchbook/index.html'), name='index'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS[0])
+
+
+if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns = [
+        re_path(r'^__debug__/', include(debug_toolbar.urls))
+    ] + urlpatterns
