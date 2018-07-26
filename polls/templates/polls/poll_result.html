@@ -8,19 +8,22 @@
 
 <h1>Poll Result</h1>
 <h2>{{poll.question}}</h2>
+{% if result_permission %}
 <div class="chart_canvas">
-{% include "polls/chart.html" %}
+    {% include "polls/chart.html" %}
 </div>
-{% if user.is_superuser or user.is_staff %}
-{% for choice in poll.choices.all %} {% if choice.choice_text != '' %}
+{% if user.is_superuser or user.is_staff %} {% for choice in poll.choices.all %} {% if choice.choice_text != '' %}
 <p>{{choice.choice_text}} - {{choice.vote}}</p>
 <ul>
     {% for voter in poll.votedata_set.all %} {% if voter.choice == choice.choice_text %}
     <li>{{voter.user}}</li>
     {% endif %} {% endfor %}
 </ul>
-{% endif %} {% endfor %}
+{% endif %} {% endfor %} {% else %} {% endif %}
 {% else %}
+<p>Vote first to see the result.</p>
 {% endif %}
-<p><a href="{{poll.get_absolute_url}}">go back to poll</a></p>
+<p>
+    <a href="{{poll.get_absolute_url}}">go back to poll</a>
+</p>
 {% endblock content %}

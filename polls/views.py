@@ -114,6 +114,7 @@ class PollResult(LoginRequiredMixin, TemplateView):
     template_name = 'polls/poll_result.html'
 
     def get_context_data(self, **kwargs):
+        user = get_user(self.request)
         poll_pk = self.kwargs.get('pk')
         poll = get_object_or_404(Poll, pk=poll_pk)
         choices = poll.choices.all()
@@ -122,11 +123,16 @@ class PollResult(LoginRequiredMixin, TemplateView):
         for choice in choices:
             choice_lable.append(choice.choice_text)
             vote_data.append(choice.vote)
-            
+        if poll.voter.all().filter(email=user.email).exists():
+            result_permission = True
+        else:
+            result_permission = False
+
         kwargs.update({
             'poll': poll,
             'choice_label': choice_lable,
-            'vote_data': vote_data
+            'vote_data': vote_data,
+            'result_permission': result_permission
         })
         return super().get_context_data(**kwargs)
         
