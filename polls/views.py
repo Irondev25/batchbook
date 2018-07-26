@@ -116,8 +116,17 @@ class PollResult(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         poll_pk = self.kwargs.get('pk')
         poll = get_object_or_404(Poll, pk=poll_pk)
+        choices = poll.choices.all()
+        choice_lable = []
+        vote_data = []
+        for choice in choices:
+            choice_lable.append(choice.choice_text)
+            vote_data.append(choice.vote)
+            
         kwargs.update({
-            'poll': poll
+            'poll': poll,
+            'choice_label': choice_lable,
+            'vote_data': vote_data
         })
         return super().get_context_data(**kwargs)
         
