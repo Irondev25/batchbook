@@ -1,0 +1,15 @@
+{% extends parent_template|default:'polls/base_poll.html' %}
+
+{% block title %}
+{{ block.super }} - Create Poll
+{% endblock title %}
+
+{% block content %}
+<h1>Create a new Poll</h1>
+<form action="{% url 'poll:poll_create' %}" method="post">
+    {% csrf_token %}
+    {{form.as_p}}
+    {{formset.as_p}}
+    <button type="submit" class="btn btn-outline-primary">Create Poll</button>
+</form>
+{% endblock content %}

@@ -47,8 +47,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+    #third-party
     'django_extensions',
+    'debug_toolbar',
+    #my-apps
     'accounts',
+    'polls',
 ]
 
 MIDDLEWARE = [
@@ -59,6 +63,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'batchbook.urls'
@@ -167,3 +172,6 @@ EMAIL_SUBJECT_PREFIX = '[BatchBook]'
 MANAGERS = (
     ('Us', 'ourselves@batchbook.com')
 )
+
+
+INTERNAL_IPS = ['127.0.0.1']

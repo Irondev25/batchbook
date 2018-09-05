@@ -1,0 +1,46 @@
+<div id="vote_result">
+</div>
+<script src="https://code.highcharts.com/highcharts.src.js"></script>
+<script>
+    Highcharts.chart('vote_result', {
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'Result Graph'
+        },
+        xAxis: {
+            categories: [
+                {% for label in choice_label %}'{{label}}'{% if not forloop.last %}, {% endif %}{% endfor %}
+            ]
+        },
+        yAxis: {
+            title: {
+                text: 'Vote'
+            }
+
+        },
+        plotOptions: {
+            series: {
+                borderWidth: 0,
+                dataLabels: {
+                    enabled: true,
+                    format: '{point.y:.1f} votes{{point.y|pluralize}}'
+                }
+            }
+        },
+        tooltip: {
+            pointFormat: '{point.y:.2f} vote</b> of total<br/>'
+        },
+        series: [{
+            name: 'choices',
+            data: [
+                {% for vote in vote_data %}{{vote}}{% if not forloop.last %}, {% endif %}{% endfor %}
+            ]
+        }]
+    });
+</script>
+
+
+
+
