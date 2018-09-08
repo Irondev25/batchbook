@@ -1,0 +1,69 @@
+{% extends parent_template|default:"batch/base_batch.html" %}
+
+{% block title %}
+{{block.super}} - Batch List
+{% endblock title %}
+
+{% block content %}
+<h1>Batch List</h1>
+
+<div class="batch_list">
+    <ul>
+        {% for batch in batches %}
+        <a href="{{batch.get_absolute_url}}">
+            <li>{{batch}}</li>
+        </a>
+        {% empty %}
+        <em>
+            No batches present
+        </em>
+        {% endfor %}
+    </ul>
+</div>
+
+
+<div class="row">
+    <div class="col-md-8">
+        {% if is_paginated %}
+        <nav aria-label="...">
+            <ul class="pagination">
+                {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{page_obj.previous_page_number}}">Previous</a>
+                </li>
+                {% else %}
+                <li class="page-item disabled">
+                    <a class="page-link" href="#" tabindex="-1">Previous</a>
+                </li>
+                {% endif %}
+                {% for page_number in paginator.page_range %}
+                {% if page_obj.number is page_number %}
+                <li class="page-item active">
+                    <a class="page-link" href="?page={{page_number}}">
+                        {{page_number}}
+                        <span class="sr-only">(current)</span>
+                    </a>
+                </li>
+                {% else %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{page_number}}">
+                        {{page_number}}
+                    </a>
+                </li>
+                {% endif %}
+                {% endfor %}
+                {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{page_obj.next_page_number}}">Next</a>
+                </li>
+                {% else %}
+                <li class="page-item disabled">
+                    <a class="page-link" href="#" tabindex="-1">Next</a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+    </div>
+</div>
+{% endblock content %}

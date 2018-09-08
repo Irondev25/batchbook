@@ -13,6 +13,11 @@
                         <span class="sr-only">(current)</span>
                     </a>
                 </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="{% url 'batch:batch_list' %}">Batches
+                        <span class="sr-only">(current)</span>
+                    </a>
+                </li>
             </ul>
             <ul class="navbar-nav mr-auto navbar-right">
                 {% if user.is_authenticated %}

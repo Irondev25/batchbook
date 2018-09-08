@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from django.shortcuts import reverse
 
 # Create your models here.
 
@@ -37,6 +38,7 @@ class BatchModel(models.Model):
         verbose_name = "Batch"
         verbose_name_plural = "Batches"
         unique_together = ('department', 'year', 'section')
+        ordering = ['department', 'year', 'section']
 
     def get_year(self):
         year = timezone.now().year - self.year + 1
@@ -52,3 +54,10 @@ class BatchModel(models.Model):
 
     def __str__(self):
         return self.department + " " + self.get_year() + " " + self.section + " section"
+    
+    def get_absolute_url(self):
+        return reverse('batch:batch_detail', kwargs={
+            'department': self.department,
+            'year': self.year,
+            'section': self.section
+        })
