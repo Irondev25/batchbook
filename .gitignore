@@ -1,2 +1,6 @@
 Untitled.ipynb
 *.pyc
+batchbook/__pycache__/*.pyc
+batch/__pycache__/*.pyc
+accounts/__pycache__/*.pyc
+polls/__pycache__/*.pyc
