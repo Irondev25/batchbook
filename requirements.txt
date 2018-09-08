@@ -1,0 +1,10 @@
+argon2-cffi==18.3.0
+cffi==1.11.5
+Django==2.1
+django-debug-toolbar==1.10
+django-extensions==2.1.2
+Pillow==5.2.0
+pycparser==2.18
+pytz==2018.5
+six==1.11.0
+sqlparse==0.2.4
