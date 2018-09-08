@@ -13,4 +13,7 @@
 <h3>Birth Date: {{user.dob|date:"d/m/y"}}</h3>
 <h3>Department: {{user.department}}</h3>
 <h3>Year:       {{user.year}} </h3>
+<h3>Section:    {{user.batch.section}}</h3>
+
+<a href="{{user.get_profile_edit_url}}"><button class="btn btn-primary">Edit Profile</button></a>
 {% endblock content %}

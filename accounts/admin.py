@@ -24,7 +24,7 @@ class StudentAdmin(BaseUserAdmin):
     fieldsets = (
         (
             None, {
-                'fields': ('email', 'usn', 'password', 'department', 'year')
+                'fields': ('email', 'usn', 'password', 'department', 'year', 'batch')
             }
         ),
         ('Personal Info', {

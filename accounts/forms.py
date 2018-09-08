@@ -56,7 +56,7 @@ class UserCreationForm(ActivationMailFormMixin ,BaseUserCreationForm):
     class Meta(BaseUserCreationForm.Meta):
         model = get_user_model()
         fields = ('email', 'usn', 'first_name', 'middle_name', 'last_name', 'department',
-                    'dob', 'year', 'profile_img')
+                    'dob', 'year', 'profile_img', 'batch')
         widgets = {
             'email': forms.EmailInput(attrs={
                 'class': 'form-control',
@@ -121,7 +121,7 @@ class UserChangeForm(forms.ModelForm):
     class Meta:
         model = get_user_model()
         fields = ('email', 'usn', 'password','first_name', 'middle_name', 'last_name',
-                  'profile_img', 'dob', 'department', 'year')
+                  'profile_img', 'dob', 'department', 'year', 'batch')
         widgets = {
             'email': forms.EmailInput(attrs={
                 'class': 'form-control'

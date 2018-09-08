@@ -10,6 +10,7 @@ from django.contrib.auth.models import (
 from django.core.validators import RegexValidator
 
 
+from batch.models import BatchModel
 from .validators import email_validator
 # Create your models here.
 
@@ -85,7 +86,7 @@ class Student(AbstractBaseUser, PermissionsMixin):
         (INFORMATION_SCIENCE, 'Information Science Engg.'),
         (COMPUTER_SCIENCE, 'Computer Science Engg.'),
     )
-    YEAR_CHOICES = [(2015, 2015),(2016,2016),(2017, 2017), (2018, 2018), (2019, 2019), (2020, 2020)]
+    YEAR_CHOICES = [(2015, 2015),(2016,2016),(2017, 2017), (2018, 2018), (2019, 2019), (2020, 2020), (2021, 2021)]
 
     email = models.EmailField(
         "College Email",
@@ -103,23 +104,24 @@ class Student(AbstractBaseUser, PermissionsMixin):
     )
     first_name = models.CharField(max_length=30, null=True)
     middle_name = models.CharField(max_length=30, blank=True, null=True)
-    last_name = models.CharField(max_length=30, blank=True, null=True)
+    last_name = models.CharField(max_length=30, null=True)
     dob = models.DateField("date of birth", null=True)
     department = models.CharField(
         max_length=3,
         choices = DEPARTMENT,
-        null=True
+        null = True
     )
     profile_img = models.ImageField(
         upload_to=upload_image_path,
-        default='profile_pics/default/default.jpg'
+        default='profile_pics/default/default.jpg',
     )
     year = models.IntegerField(
         'Year',
         choices=YEAR_CHOICES,
-        null=True,
-        help_text="Year which you joined the college."
+        help_text="Year which you joined the college.",
+        null= True
     )
+    batch = models.ForeignKey(BatchModel, related_name='students', on_delete=models.CASCADE, null=True)
 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField('class representative',default=False)
@@ -170,3 +172,6 @@ class Student(AbstractBaseUser, PermissionsMixin):
     
     def get_absolute_url(self):
         return reverse('student:profile')
+    
+    def get_profile_edit_url(self):
+        return reverse('student:profile_edit')
