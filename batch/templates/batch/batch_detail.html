@@ -10,7 +10,7 @@
 <p>Department: {{batch.department}} Year: {{batch.year}} Section: {{batch.section}}</p>
 {% for student in batch.students.all %}
 <div class="stu_detail jumbotron" style="width:max-content">
-    Name: <a href="{{student.get_absolute_url}}">{{student.get_full_name}}</a> <br> 
+    Name: <a href="{% url 'student:profile_public' student.usn %}">{{student.get_full_name}}</a> <br> 
     Usn: {{student.usn}} <br>   
     Email: {{student.email}} <br>   
 </div>
