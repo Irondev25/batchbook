@@ -22,10 +22,6 @@ class QuestionModel(models.Model):
         ordering = ['-pub_date', 'que_text']
 
     
-
-
-
-
     def __str__(self):
             return smart_truncate(self.que_text, 30) + " on "+ self.pub_date
     
