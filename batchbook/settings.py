@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'accounts',
     'batch',
     'polls',
+    'questions'
 ]
 
 MIDDLEWARE = [

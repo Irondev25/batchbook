@@ -1,5 +1,3 @@
-from tkinter.constants import CASCADE
-
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.forms.fields import CharField, DateTimeField
@@ -11,9 +9,10 @@ USER = get_user_model()
 
 # Create your models here.
 class QuestionModel(models.Model):
-    que_text = models.CharField()
+    que_title = models.CharField("Question Title", max_length=60)
+    que_text = models.TextField("Question")
     author = models.ForeignKey(USER, on_delete=models.CASCADE, related_name="questions")
-    pub_date = models.DateTimeField(auto_add_now=True)
+    pub_date = models.DateTimeField(auto_now_add=True)
     save_date = models.DateTimeField(auto_now=True)
     
     class Meta:
@@ -28,8 +27,8 @@ class QuestionModel(models.Model):
 
 class AnswerModel(models.Model):
     question = models.ForeignKey(QuestionModel, on_delete=models.CASCADE, related_name="answers")
-    ans_text = models.CharField()
-    author = models.CharField(default="Anonymous")
+    ans_text = models.TextField()
+    author = models.CharField(default="Anonymous", max_length=100)
     pub_date = models.DateTimeField(auto_now_add=True)
     save_date= models.DateTimeField(auto_now=True)
     class Meta:
